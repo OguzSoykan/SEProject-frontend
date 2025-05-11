@@ -1,8 +1,8 @@
-import React, { FC } from "react";
-import Logo from "shared/Logo/Logo";
-import Navigation from "shared/Navigation/Navigation";
+import { FC } from "react";
 import ButtonPrimary from "shared/Button/ButtonPrimary";
+import Logo from "shared/Logo/Logo";
 import MenuBar from "shared/MenuBar/MenuBar";
+import Navigation from "shared/Navigation/Navigation";
 import SwitchDarkMode from "shared/SwitchDarkMode/SwitchDarkMode";
 
 export interface MainNav1Props {
