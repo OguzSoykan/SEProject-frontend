@@ -24,11 +24,20 @@ function PageHome() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState({
+    q: '',
+    cuisine: '',
+    location: '',
+    price: '',
+    rating: ''
+  });
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         const data = await restaurantService.getAllRestaurants();
+        console.log("GET data ->", data); // 🔍 BURAYI EKLE
+      setRestaurants(data);
         setRestaurants(data);
         setLoading(false);
       } catch (err) {
@@ -39,6 +48,35 @@ function PageHome() {
 
     fetchRestaurants();
   }, []);
+
+   // 🔎 Filtrele (query parametrelerini backend'e yolla)
+  const handleFilter = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+
+    if (filters.q) params.append("q", filters.q);
+    if (filters.cuisine) params.append("cuisine", filters.cuisine);
+    if (filters.location) params.append("location", filters.location);
+    if (filters.price) params.append("price", filters.price);
+    if (filters.rating) params.append("rating", filters.rating);
+
+    try {
+      const data: any = await restaurantService.getFilteredRestaurants(params.toString());
+ // ✅ Gerçek hata değilse: boş liste kontrolü
+  
+  const result = Array.isArray(data) ? data : data.data;
+  setRestaurants(result);
+
+  if (result.length === 0) {
+    setError("No restaurants found matching your criteria.");
+  } else {
+    setError(null);
+  }
+} catch (err) {
+  console.error("Filter fetch failed:", err);
+  setError("Failed to fetch filtered restaurants."); // sadece fetch patlarsa
+}
+};
 
   return (
     <div className="nc-PageHome relative overflow-hidden">
@@ -54,6 +92,79 @@ function PageHome() {
       />
 
       <div className="container relative space-y-24 my-24 lg:space-y-32 lg:my-32">
+       {/* 🔍 SEARCH + FILTER FORM */}
+      <div className="container mt-4">
+        <form
+          onSubmit={handleFilter}
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
+        >
+          <input
+            type="text"
+            placeholder="Search restaurant..."
+            className="p-2 border border-neutral-300 rounded-md"
+            onChange={(e) => setFilters(prev => ({ ...prev, q: e.target.value }))}
+          />
+          {/* Cuisine dropdown */}
+    <select
+      className="p-2 border border-neutral-300 rounded-md"
+      onChange={(e) => setFilters(prev => ({ ...prev, cuisine: e.target.value }))}
+    >
+      <option value="">All Cuisines</option>
+      <option value="Turkish">Turkish</option>
+      <option value="Japanese">Japanese</option>
+      <option value="Italian">Italian</option>
+      <option value="American">American</option>
+    </select>
+
+    {/* Location dropdown */}
+    <select
+      className="p-2 border border-neutral-300 rounded-md"
+      onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
+    >
+      <option value="">All Locations</option>
+      <option value="Istanbul">Istanbul</option>
+      <option value="Ankara">Ankara</option>
+      <option value="Izmir">Izmir</option>
+      <option value="Bursa">Bursa</option>
+      <option value="Antalya">Antalya</option>
+    </select>
+
+    {/* Average Price dropdown */}
+    <select
+      className="p-2 border border-neutral-300 rounded-md"
+      onChange={(e) => setFilters(prev => ({ ...prev, price: e.target.value }))}
+    >
+      <option value="">Any Price</option>
+      <option value="50">Up to ₺50</option>
+      <option value="100">Up to ₺100</option>
+      <option value="150">Up to ₺150</option>
+      <option value="1000">₺150+</option>
+    </select>
+
+    {/* Rating dropdown */}
+    <select
+      className="p-2 border border-neutral-300 rounded-md"
+      onChange={(e) => setFilters(prev => ({ ...prev, rating: e.target.value }))}
+    >
+      <option value="">Any Rating</option>
+      <option value="1.0">1.0+</option>
+      <option value="2.0">2.0+</option>
+      <option value="3.0">3.0+</option>
+      <option value="4.0">4.0+</option>
+      <option value="4.5">4.5+</option>
+    </select>
+
+          <div className="col-span-full flex justify-center">
+            <button
+              type="submit"
+              className="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded-md"
+            >
+              🔍 Apply Filters
+            </button>
+          </div>
+        </form>
+      </div>
+    
         {/* RESTAURANT LISTINGS */}
         <div>
           <Heading
@@ -103,7 +214,7 @@ function PageHome() {
                 >
                   <h3 className="text-lg font-semibold">{location}</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">
-                    {restaurants.filter(r => r.Location === location).length} restaurants
+                    {Array.isArray(restaurants) ? restaurants.filter(r => r.Location === location).length : 0} restaurants
                   </p>
                 </div>
               ))}

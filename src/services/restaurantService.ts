@@ -28,5 +28,10 @@ export const restaurantService = {
       console.error(`Error fetching restaurant ${id}:`, error);
       throw error;
     }
+  },
+
+   getFilteredRestaurants: async (query: string): Promise<Restaurant[]> => {
+    const res = await fetch(`${API_URL}/restaurants/search?${query}`);
+    return res.json();
   }
 }; 
