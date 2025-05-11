@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import Logo from "shared/Logo/Logo";
 import Navigation from "shared/Navigation/Navigation";
-import SearchDropdown from "./SearchDropdown";
 import ButtonPrimary from "shared/Button/ButtonPrimary";
 import MenuBar from "shared/MenuBar/MenuBar";
 import SwitchDarkMode from "shared/SwitchDarkMode/SwitchDarkMode";
@@ -25,7 +24,6 @@ const MainNav1: FC<MainNav1Props> = ({ isTop }) => {
         <div className="flex-shrink-0 flex items-center justify-end text-neutral-700 dark:text-neutral-100 space-x-1">
           <div className="hidden items-center xl:flex space-x-1">
             <SwitchDarkMode />
-            <SearchDropdown />
             <div className="px-1" />
             <ButtonPrimary href="/login">Sign up</ButtonPrimary>
           </div>
