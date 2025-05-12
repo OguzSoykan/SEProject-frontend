@@ -137,11 +137,9 @@ export default function CartDropdown() {
                   {items.length > 0 && (
                     <div className="bg-neutral-50 dark:bg-slate-900 p-5">
                       <p className="flex justify-between font-semibold text-slate-900 dark:text-slate-100">
-                        <span>
                           <span>Subtotal</span>
                           <span className="block text-sm text-slate-500 dark:text-slate-400 font-normal">
-                            Shipping and taxes calculated at checkout.
-                          </span>
+
                         </span>
                         <span className="">₺{total.toFixed(2)}</span>
                       </p>

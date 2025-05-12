@@ -18,7 +18,7 @@ const Logo: React.FC<LogoProps> = ({
     >
       {img ? (
         <img
-          className="block max-h-8 sm:max-h-10"
+          className="block max-h-16 sm:max-h-20"
           src={img}
           alt="Logo"
         />
