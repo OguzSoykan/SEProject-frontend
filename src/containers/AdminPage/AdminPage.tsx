@@ -85,6 +85,21 @@ export default function AdminPage() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+
+    if (window.confirm(`Are you sure you want to delete user "${selectedUser.username}"?`)) {
+      try {
+        await axios.delete(`http://localhost:8080/user/${selectedUser.id}`);
+        setIsEditModalOpen(false);
+        fetchUsers(); // Refresh the user list
+      } catch (err) {
+        console.error("Error deleting user:", err);
+        setError("Failed to delete user");
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -259,20 +274,29 @@ export default function AdminPage() {
                       </select>
                     </div>
 
-                    <div className="mt-6 flex justify-end space-x-3">
+                    <div className="mt-6 flex justify-between">
                       <button
                         type="button"
-                        onClick={() => setIsEditModalOpen(false)}
-                        className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 dark:bg-neutral-700 px-4 py-2 text-sm font-medium text-gray-900 dark:text-neutral-200 hover:bg-gray-200 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                        onClick={handleDeleteUser}
+                        className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
                       >
-                        Cancel
+                        Delete User
                       </button>
-                      <button
-                        type="submit"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      >
-                        Save
-                      </button>
+                      <div className="flex space-x-3">
+                        <button
+                          type="button"
+                          onClick={() => setIsEditModalOpen(false)}
+                          className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 dark:bg-neutral-700 px-4 py-2 text-sm font-medium text-gray-900 dark:text-neutral-200 hover:bg-gray-200 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        >
+                          Save
+                        </button>
+                      </div>
                     </div>
                   </form>
                 </Dialog.Panel>
