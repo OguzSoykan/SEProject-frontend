@@ -98,7 +98,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
           )}
 
           <div className="flex-1 flex items-center justify-end ">
-            {!showSearchForm && <TemplatesDropdown />}
+            {/* {!showSearchForm && <TemplatesDropdown />}
             {!showSearchForm && <LangDropdown />}
             {!showSearchForm && (
               <button
@@ -107,7 +107,7 @@ const MainNav2: FC<MainNav2Props> = ({ className = "" }) => {
               >
                 {renderMagnifyingGlassIcon()}
               </button>
-            )}
+            )} */}
             <AvatarDropdown />
             <CartDropdown />
           </div>

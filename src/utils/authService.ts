@@ -56,5 +56,19 @@ export const authService = {
     // Check if user data exists in localStorage
     const userData = localStorage.getItem('user');
     return !!userData;
+  },
+
+  isAdmin() {
+    const userData = localStorage.getItem('user');
+    if (!userData) return false;
+    
+    try {
+      const user = JSON.parse(userData);
+      // Check if role is 'admin' (case insensitive)
+      return user.role?.toLowerCase() === 'admin';
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      return false;
+    }
   }
 }; 

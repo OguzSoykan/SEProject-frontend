@@ -7,13 +7,19 @@ export interface Restaurant {
   Name: string;
   Description: string;
   Location: string;
+  Cuisine: string;
+  avg_price: number;
+  rating: number;
 }
 
 export const restaurantService = {
   getAllRestaurants: async (): Promise<Restaurant[]> => {
     try {
-      const response = await axios.get(`${API_URL}/restaurants`);
-      return response.data;
+      const response = await fetch('http://localhost:8080/restaurants');
+      if (!response.ok) {
+        throw new Error('Failed to fetch restaurants');
+      }
+      return response.json();
     } catch (error) {
       console.error('Error fetching restaurants:', error);
       throw error;
@@ -30,8 +36,13 @@ export const restaurantService = {
     }
   },
 
-   getFilteredRestaurants: async (query: string): Promise<Restaurant[]> => {
-    const res = await fetch(`${API_URL}/restaurants/search?${query}`);
-    return res.json();
+  getFilteredRestaurants: async (queryParams: string): Promise<Restaurant[]> => {
+    try {
+      const response = await axios.get(`${API_URL}/restaurants/filter?${queryParams}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching filtered restaurants:', error);
+      throw error;
+    }
   }
 }; 

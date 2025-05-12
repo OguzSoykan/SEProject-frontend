@@ -32,10 +32,11 @@ const RestaurantMenuModal: FC<RestaurantMenuModalProps> = ({
         try {
           setLoading(true);
           const data = await menuService.getRestaurantMenu(restaurantId);
-          setMenuItems(data);
+          setMenuItems(data || []);
           setError(null);
         } catch (err) {
           setError('Failed to load menu items');
+          setMenuItems([]);
         } finally {
           setLoading(false);
         }
@@ -51,10 +52,77 @@ const RestaurantMenuModal: FC<RestaurantMenuModalProps> = ({
       name: item.name,
       price: item.price,
       quantity: 1,
-      image: item.image
+      image: item.image,
+      restaurantId: restaurantId.toString()
     });
     setSelectedItem(item);
     setShowNotify(true);
+  };
+
+  const renderMenuContent = () => {
+    if (loading) {
+      return (
+        <div className="mt-4 text-center py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading menu items...</p>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="mt-4 text-center py-8">
+          <p className="text-red-500">{error}</p>
+        </div>
+      );
+    }
+
+    if (!menuItems || menuItems.length === 0) {
+      return (
+        <div className="mt-4 text-center py-8">
+          <p className="text-gray-600 dark:text-gray-300">No menu items available at the moment.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Please check back later.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {menuItems.map((item) => (
+          <div
+            key={item.id}
+            className="bg-white dark:bg-neutral-700 rounded-lg shadow-md overflow-hidden"
+          >
+            {item.image && (
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-48 object-cover"
+              />
+            )}
+            <div className="p-4">
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {item.name}
+              </h4>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+                {item.description}
+              </p>
+              <div className="mt-4 flex justify-between items-center">
+                <span className="text-lg font-bold text-primary-500">
+                  ₺{item.price.toFixed(2)}
+                </span>
+                <button
+                  onClick={() => handleAddToCart(item)}
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                >
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -98,47 +166,7 @@ const RestaurantMenuModal: FC<RestaurantMenuModalProps> = ({
                     </button>
                   </Dialog.Title>
 
-                  {loading ? (
-                    <div className="mt-4 text-center">Loading...</div>
-                  ) : error ? (
-                    <div className="mt-4 text-center text-red-500">{error}</div>
-                  ) : (
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {menuItems.map((item) => (
-                        <div
-                          key={item.id}
-                          className="bg-white dark:bg-neutral-700 rounded-lg shadow-md overflow-hidden"
-                        >
-                          {item.image && (
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-full h-48 object-cover"
-                            />
-                          )}
-                          <div className="p-4">
-                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                              {item.name}
-                            </h4>
-                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
-                              {item.description}
-                            </p>
-                            <div className="mt-4 flex justify-between items-center">
-                              <span className="text-lg font-bold text-primary-500">
-                                ₺{item.price.toFixed(2)}
-                              </span>
-                              <button
-                                onClick={() => handleAddToCart(item)}
-                                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                              >
-                                Add to Cart
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {renderMenuContent()}
                 </Dialog.Panel>
               </Transition.Child>
             </div>

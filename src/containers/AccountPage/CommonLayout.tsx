@@ -42,22 +42,22 @@ const CommonLayout: FC<CommonLayoutProps> = ({ children }) => {
                 name: "Account info",
                 link: "/account",
               },
-              {
-                name: "Save lists",
-                link: "/account-savelists",
-              },
+              // {
+              //   name: "Save lists",
+              //   link: "/account-savelists",
+              // },
               {
                 name: " My order",
                 link: "/account-my-order",
               },
-              {
-                name: "Change password",
-                link: "/account-change-password",
-              },
-              {
-                name: "Change Billing",
-                link: "/account-billing",
-              },
+              // {
+              //   name: "Change password",
+              //   link: "/account-change-password",
+              // },
+              // {
+              //   name: "Change Billing",
+              //   link: "/account-billing",
+              // },
             ].map((item, index) => (
               <NavLink
                 key={index}

@@ -2,6 +2,7 @@ import React from "react";
 import MyRouter from "routers/index";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { CartProvider } from "context/CartContext";
+import AdminPage from "containers/AdminPage/AdminPage";
 
 function App() {
   return (

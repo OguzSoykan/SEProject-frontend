@@ -27,30 +27,27 @@ import CheckoutPage from "containers/PageCheckout/CheckoutPage";
 import PageCollection2 from "containers/PageCollection2";
 import { Toaster } from "react-hot-toast";
 import { authService } from "utils/authService";
+import ProtectedRoute from "components/ProtectedRoute";
+import AdminPage from "containers/AdminPage/AdminPage";
+import UnauthorizedPage from "components/UnauthorizedPage";
 
 export const pages: Page[] = [
   { path: "/", component: PageHome },
-  //
   { path: "/home-header-2", component: PageHome },
   { path: "/product-detail", component: ProductDetailPage },
   { path: "/product-detail-2", component: ProductDetailPage2 },
-  //
   { path: "/page-collection-2", component: PageCollection2 },
   { path: "/page-collection", component: PageCollection },
   { path: "/page-search", component: PageSearch },
-  //
   { path: "/account", component: AccountPage },
   { path: "/account-savelists", component: AccountSavelists },
   { path: "/account-change-password", component: AccountPass },
   { path: "/account-billing", component: AccountBilling },
   { path: "/account-my-order", component: AccountOrder },
-  //
   { path: "/cart", component: CartPage },
   { path: "/checkout", component: CheckoutPage },
-  //
   { path: "/blog", component: BlogPage },
   { path: "/blog-single", component: BlogSingle },
-  //
   { path: "/contact", component: PageContact },
   { path: "/about", component: PageAbout },
   { path: "/signup", component: PageSignUp },
@@ -64,6 +61,7 @@ const publicRoutes = ["/login", "/signup"];
 const AppContent = () => {
   const location = useLocation();
   const isAuthenticated = authService.isAuthenticated();
+  const isAdmin = authService.isAdmin();
   const hideHeaderPaths = ["/login", "/signup"];
   const shouldShowHeader = !hideHeaderPaths.includes(location.pathname);
 
@@ -75,6 +73,11 @@ const AppContent = () => {
   // If user is authenticated and tries to access login/signup, redirect to home
   if (isAuthenticated && publicRoutes.includes(location.pathname)) {
     return <Navigate to="/" replace />;
+  }
+
+  // If user tries to access admin page without admin role, show unauthorized page
+  if (location.pathname === "/admin" && !isAdmin) {
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return (
@@ -113,6 +116,15 @@ const AppContent = () => {
 
           return <Route key={index} element={<Component />} path={path} />;
         })}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route element={<Page404 />} />
       </Routes>
       {shouldShowHeader && <Footer />}
@@ -129,3 +141,31 @@ const MyRoutes = () => {
 };
 
 export default MyRoutes;
+
+export type LocationStates = {
+  "/"?: {};
+  "/#"?: {};
+  "/login"?: {};
+  "/signup"?: {};
+  "/forgot-pass"?: {};
+  "/page-author"?: {};
+  "/account"?: {};
+  "/account-my-order"?: {};
+  "/account-savelists"?: {};
+  "/account-change-password"?: {};
+  "/account-billing"?: {};
+  "/account-my-order/:id"?: {};
+  "/cart"?: {};
+  "/checkout"?: {};
+  "/home2"?: {};
+  "/home3"?: {};
+  "/page-collection"?: {};
+  "/page-collection-2"?: {};
+  "/page-product-detail/:id"?: {};
+  "/page-search"?: {};
+  "/page-shopping-cart"?: {};
+  "/page-404"?: {};
+  "/subscription"?: {};
+  "/admin"?: {};
+  "/unauthorized"?: {};
+};

@@ -31,11 +31,11 @@ const PageHome: FC = () => {
       </Helmet>
 
       <div className="container relative">
-        <SectionHero
+        {/* <SectionHero
           className="pb-10 lg:pb-16 lg:pt-6"
           heading="Discover Amazing Restaurants"
           subHeading="Find and order from the best restaurants in your area"
-        />
+        /> */}
 
         {loading ? (
           <div className="text-center py-10">Loading restaurants...</div>

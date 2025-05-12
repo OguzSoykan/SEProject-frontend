@@ -85,11 +85,11 @@ function PageHome() {
       </Helmet>
 
       {/* SECTION HERO */}
-      <SectionHero
-        className="pb-10 lg:pb-16 lg:pt-6"
-        heading="Discover Amazing Restaurants"
-        subHeading="Find and order from the best restaurants in your area"
-      />
+      {/* <SectionHero
+          className="pb-10 lg:pb-16 lg:pt-6"
+          heading="Discover Amazing Restaurants"
+          subHeading="Find and order from the best restaurants in your area"
+        /> */}
 
       <div className="container relative space-y-24 my-24 lg:space-y-32 lg:my-32">
        {/* 🔍 SEARCH + FILTER FORM */}

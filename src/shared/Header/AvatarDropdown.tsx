@@ -1,33 +1,25 @@
 import { Popover, Transition } from "@headlessui/react";
+import { avatarImgs } from "contains/fakeData";
 import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Avatar from "shared/Avatar/Avatar";
 import SwitchDarkMode2 from "shared/SwitchDarkMode/SwitchDarkMode2";
 import { authService } from "utils/authService";
 
 interface UserData {
-  uid: number;
-  uname: string;
-  role: string;
-  fname: string;
-  lname: string;
-  exp: number;
-  iat: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
 }
 
 export default function AvatarDropdown() {
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const storedUserData = localStorage.getItem('user');
     if (storedUserData) {
-      try {
-        const parsedData = JSON.parse(storedUserData);
-        setUserData(parsedData);
-        setIsAdmin(authService.isAdmin());
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-      }
+      setUserData(JSON.parse(storedUserData));
     }
   }, []);
 
@@ -79,14 +71,14 @@ export default function AvatarDropdown() {
                   <div className="relative grid grid-cols-1 gap-6 bg-white dark:bg-neutral-800 p-7">
                     <div className="flex items-center space-x-3">
                       <div className="flex-shrink-0">
-                        {/* <Avatar imgUrl={avatarImgs[2]} sizeClass="w-10 h-10" /> */}
+                        <Avatar imgUrl={avatarImgs[2]} sizeClass="w-10 h-10" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-base font-semibold">
-                          {userData ? `${userData.fname} ${userData.lname}` : 'Loading...'}
+                          {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'}
                         </h4>
                         <p className="text-sm text-gray-500 truncate">
-                          {userData ? userData.uname : ''}
+                          {userData ? userData.email : ''}
                         </p>
                       </div>
                     </div>
@@ -179,50 +171,6 @@ export default function AvatarDropdown() {
                         <p className="text-sm font-medium">{"My Order"}</p>
                       </div>
                     </Link>
-
-                    {/* Admin Panel Link - Only visible to admin users */}
-                    {isAdmin && (
-                      <Link
-                        to={"/admin"}
-                        className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                        onClick={() => close()}
-                      >
-                        <div className="flex items-center justify-center flex-shrink-0 text-neutral-500 dark:text-neutral-300">
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <path
-                              d="M12 16V12"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <path
-                              d="M12 8H12.01"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </div>
-                        <div className="ml-4">
-                          <p className="text-sm font-medium">{"Admin Panel"}</p>
-                        </div>
-                      </Link>
-                    )}
 
                     <div className="w-full border-b border-neutral-200 dark:border-neutral-700" />
 
