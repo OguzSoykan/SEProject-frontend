@@ -38,7 +38,7 @@ export const restaurantService = {
 
   getFilteredRestaurants: async (queryParams: string): Promise<Restaurant[]> => {
     try {
-      const response = await axios.get(`${API_URL}/restaurants/filter?${queryParams}`);
+      const response = await axios.get(`${API_URL}/restaurants/search?${queryParams}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching filtered restaurants:', error);
