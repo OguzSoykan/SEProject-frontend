@@ -30,6 +30,8 @@ import { authService } from "utils/authService";
 import ProtectedRoute from "components/ProtectedRoute";
 import AdminPage from "containers/AdminPage/AdminPage";
 import UnauthorizedPage from "components/UnauthorizedPage";
+import RestaurantAdminPage from "containers/RestaurantAdminPage/RestaurantAdminPage";
+
 
 export const pages: Page[] = [
   { path: "/", component: PageHome },
@@ -124,11 +126,22 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
+          {/* Restaurant Admin Panel - Admin and Restaurant Admin both allowed */}
+        <Route
+         path="/restaurant-admin"
+          element={
+            authService.isAdmin() || authService.isRestaurantAdmin()
+        ? <RestaurantAdminPage />
+        : <Navigate to="/unauthorized" replace />
+    }
+  />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route element={<Page404 />} />
       </Routes>
       {shouldShowHeader && <Footer />}
     </>
+    
+
   );
 };
 
@@ -168,4 +181,6 @@ export type LocationStates = {
   "/subscription"?: {};
   "/admin"?: {};
   "/unauthorized"?: {};
+  "/restaurant-admin"?: {};
+
 };

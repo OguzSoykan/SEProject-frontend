@@ -3,15 +3,16 @@ import MyRouter from "routers/index";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { CartProvider } from "context/CartContext";
 import AdminPage from "containers/AdminPage/AdminPage";
+import RestaurantAdminPage from "containers/RestaurantAdminPage/RestaurantAdminPage";
 
 function App() {
   return (
     <HelmetProvider>
       <Helmet>
-        <title>Ciseco || Shop - eCommerce React template</title>
+        <title>Food Ordering</title>
         <meta
           name="description"
-          content="Ciseco || Shop - eCommerce React template"
+          content="Food Ordering"
         />
       </Helmet>
 

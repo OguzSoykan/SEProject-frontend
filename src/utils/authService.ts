@@ -70,5 +70,16 @@ export const authService = {
       console.error('Error parsing user data:', error);
       return false;
     }
+  },
+ isRestaurantAdmin() {
+  const userData = localStorage.getItem("user");
+  if (!userData) return false;
+  try {
+    const user = JSON.parse(userData);
+    return user.role?.toLowerCase() === "restaurant_admin";
+  } catch {
+    return false;
   }
+}
+
 }; 

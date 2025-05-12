@@ -17,6 +17,7 @@ interface UserData {
 export default function AvatarDropdown() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isRestaurantAdmin, setIsRestaurantAdmin] = useState(false);
 
   useEffect(() => {
     const storedUserData = localStorage.getItem('user');
@@ -25,6 +26,7 @@ export default function AvatarDropdown() {
         const parsedData = JSON.parse(storedUserData);
         setUserData(parsedData);
         setIsAdmin(authService.isAdmin());
+        setIsRestaurantAdmin(authService.isRestaurantAdmin());
       } catch (error) {
         console.error('Error parsing user data:', error);
       }
@@ -225,6 +227,49 @@ export default function AvatarDropdown() {
                     )}
 
                     <div className="w-full border-b border-neutral-200 dark:border-neutral-700" />
+                    {/* RestaurantAdmin Panel Link - Only visible to restaurant admin */}
+                    {(isRestaurantAdmin || isAdmin) && (
+                      <Link
+                        to={"/restaurant-admin"}
+                        className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                        onClick={() => close()}
+                      >
+                        <div className="flex items-center justify-center flex-shrink-0 text-neutral-500 dark:text-neutral-300">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M4 7H20"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M4 12H20"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M4 17H20"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="ml-4">
+                          <p className="text-sm font-medium">{"Restaurant Admin Panel"}</p>
+                        </div>
+                      </Link>
+                    )}
 
                     {/* ------------------ 2 --------------------- */}
                     <div className="flex items-center justify-between">
