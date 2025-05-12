@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import ButtonSecondary from "shared/Button/ButtonSecondary";
 import CommonLayout from "./CommonLayout";
 import { orderService, Order } from "services/orderService";
 import { Link } from "react-router-dom";
@@ -17,7 +16,7 @@ const AccountOrder = () => {
         setOrders(data || []);
         setError(null);
       } catch (err) {
-        setError('Failed to load orders');
+        setError("Failed to load orders");
         setOrders([]);
       } finally {
         setLoading(false);
@@ -29,18 +28,18 @@ const AccountOrder = () => {
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'pending':
-        return 'text-yellow-500';
-      case 'delivered':
-        return 'text-green-500';
-      case 'cancelled':
-        return 'text-red-500';
+      case "pending":
+        return "text-yellow-500";
+      case "delivered":
+        return "text-green-500";
+      case "cancelled":
+        return "text-red-500";
       default:
-        return 'text-primary-500';
+        return "text-primary-500";
     }
   };
 
-  const renderOrderItems = (items: Order['items']) => {
+  const renderOrderItems = (items: Order["items"]) => {
     if (!items || items.length === 0) {
       return (
         <div className="mt-4 text-sm text-gray-500">
@@ -68,7 +67,10 @@ const AccountOrder = () => {
     if (!order) return null;
 
     return (
-      <div key={order.id} className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden z-0">
+      <div
+        key={order.id}
+        className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden z-0"
+      >
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start p-4 sm:p-8 bg-slate-50 dark:bg-slate-500/5">
           <div className="flex-1">
             <div className="flex justify-between items-start">
@@ -90,19 +92,9 @@ const AccountOrder = () => {
               </div>
             </div>
 
-            {/* Order Items */}
             <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
               {renderOrderItems(order.items)}
             </div>
-          </div>
-
-          <div className="mt-4 sm:mt-0 sm:ml-6">
-            <ButtonSecondary
-              sizeClass="py-2.5 px-4 sm:px-6"
-              fontSize="text-sm font-medium"
-            >
-              View Details
-            </ButtonSecondary>
           </div>
         </div>
       </div>
@@ -146,9 +138,8 @@ const AccountOrder = () => {
     <div>
       <CommonLayout>
         <div className="space-y-10 sm:space-y-12">
-          {/* HEADING */}
           <h2 className="text-2xl sm:text-3xl font-semibold">Order History</h2>
-          
+
           {loading ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>

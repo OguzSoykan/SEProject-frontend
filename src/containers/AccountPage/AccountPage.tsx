@@ -1,10 +1,8 @@
 import Label from "components/Label/Label";
 import React, { FC, useEffect, useState } from "react";
-import ButtonPrimary from "shared/Button/ButtonPrimary";
 import Input from "shared/Input/Input";
 import CommonLayout from "./CommonLayout";
 import { Helmet } from "react-helmet-async";
-import { avatarImgs } from "contains/fakeData";
 
 export interface AccountPageProps {
   className?: string;
@@ -14,7 +12,6 @@ interface UserData {
   firstName: string;
   lastName: string;
   username: string;
-  email: string;
 }
 
 const AccountPage: FC<AccountPageProps> = ({ className = "" }) => {
@@ -22,9 +19,14 @@ const AccountPage: FC<AccountPageProps> = ({ className = "" }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUserData = localStorage.getItem('user');
+    const storedUserData = localStorage.getItem("user");
     if (storedUserData) {
-      setUserData(JSON.parse(storedUserData));
+      const parsed = JSON.parse(storedUserData);
+      setUserData({
+        firstName: parsed.firstName,
+        lastName: parsed.lastName,
+        username: parsed.username,
+      });
     }
     setLoading(false);
   }, []);
@@ -44,13 +46,11 @@ const AccountPage: FC<AccountPageProps> = ({ className = "" }) => {
       </Helmet>
       <CommonLayout>
         <div className="space-y-10 sm:space-y-12">
-          {/* HEADING */}
           <h2 className="text-2xl sm:text-3xl font-semibold">
             Account information
           </h2>
           <div className="flex flex-col md:flex-row">
             <div className="flex-shrink-0 flex items-start">
-              {/* AVATAR */}
               <div className="relative rounded-full overflow-hidden flex">
                 <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col items-center justify-center text-neutral-50 cursor-pointer">
                   <svg
@@ -68,7 +68,6 @@ const AccountPage: FC<AccountPageProps> = ({ className = "" }) => {
                       strokeLinejoin="round"
                     />
                   </svg>
-
                   <span className="mt-1 text-xs">Change Image</span>
                 </div>
                 <input
@@ -80,40 +79,20 @@ const AccountPage: FC<AccountPageProps> = ({ className = "" }) => {
             <div className="flex-grow mt-10 md:mt-0 md:pl-16 max-w-3xl space-y-6">
               <div>
                 <Label>Full name</Label>
-                <Input 
-                  className="mt-1.5" 
+                <Input
+                  className="mt-1.5"
                   defaultValue={`${userData.firstName} ${userData.lastName}`}
                   readOnly
                 />
               </div>
 
-              {/* ---- */}
               <div>
                 <Label>Username</Label>
-                <Input 
-                  className="mt-1.5" 
+                <Input
+                  className="mt-1.5"
                   defaultValue={userData.username}
                   readOnly
                 />
-              </div>
-
-              {/* ---- */}
-              <div>
-                <Label>Email</Label>
-                <div className="mt-1.5 flex">
-                  <span className="inline-flex items-center px-2.5 rounded-l-2xl border border-r-0 border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 text-sm">
-                    <i className="text-2xl las la-envelope"></i>
-                  </span>
-                  <Input
-                    className="!rounded-l-none"
-                    defaultValue={userData.email}
-                    readOnly
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <ButtonPrimary>Update account</ButtonPrimary>
               </div>
             </div>
           </div>

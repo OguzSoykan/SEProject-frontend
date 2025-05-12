@@ -4,7 +4,6 @@ import { NavLink } from "react-router-dom";
 interface UserData {
   firstName: string;
   lastName: string;
-  email: string;
 }
 
 export interface CommonLayoutProps {
@@ -29,9 +28,9 @@ const CommonLayout: FC<CommonLayoutProps> = ({ children }) => {
             <h2 className="text-3xl xl:text-4xl font-semibold">Account</h2>
             <span className="block mt-4 text-neutral-500 dark:text-neutral-400 text-base sm:text-lg">
               <span className="text-slate-900 dark:text-slate-200 font-semibold">
-                {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'},
-              </span>{" "}
-              {userData ? userData.email : ''}
+                {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'}
+              </span>
+
             </span>
           </div>
           <hr className="mt-10 border-slate-200 dark:border-slate-700"></hr>

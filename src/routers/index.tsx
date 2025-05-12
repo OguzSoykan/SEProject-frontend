@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Page } from "./types";
 import ScrollToTop from "./ScrollToTop";
-import Footer from "shared/Footer/Footer";
+// import Footer from "shared/Footer/Footer";
 import PageHome from "containers/PageHome/PageHome";
 import Page404 from "containers/Page404/Page404";
 import AccountPage from "containers/AccountPage/AccountPage";
@@ -138,7 +138,7 @@ const AppContent = () => {
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route element={<Page404 />} />
       </Routes>
-      {shouldShowHeader && <Footer />}
+      {/* {shouldShowHeader && <Footer />} */}
     </>
     
 

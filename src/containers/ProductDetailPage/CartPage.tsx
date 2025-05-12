@@ -27,9 +27,7 @@ const CartPage = () => {
           <div>
             <div className="flex justify-between ">
               <div className="flex-[1.5] ">
-                <h3 className="text-base font-semibold">
-                  {item.name}
-                </h3>
+                <h3 className="text-base font-semibold">{item.name}</h3>
                 <div className="mt-1.5 sm:mt-2.5 flex text-sm text-slate-600 dark:text-slate-300">
                   <div className="flex items-center space-x-1.5">
                     <span>Price: ₺{item.price.toFixed(2)}</span>
@@ -42,7 +40,9 @@ const CartPage = () => {
                     id="qty"
                     className="form-select text-sm rounded-md py-1 border-slate-200 dark:border-slate-700 relative z-10 dark:bg-slate-800"
                     value={item.quantity}
-                    onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
+                    onChange={(e) =>
+                      updateQuantity(item.id, parseInt(e.target.value))
+                    }
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((qty) => (
                       <option key={qty} value={qty}>
@@ -89,20 +89,20 @@ const CartPage = () => {
   return (
     <div className="nc-CartPage">
       <Helmet>
-        <title>Shopping Cart</title>
+        <title>Order Cart</title>
       </Helmet>
 
       <main className="container py-16 lg:pb-28 lg:pt-20 ">
         <div className="mb-12 sm:mb-16">
           <h2 className="block text-2xl sm:text-3xl lg:text-4xl font-semibold ">
-            Shopping Cart
+            Order Cart
           </h2>
           <div className="block mt-3 sm:mt-5 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-400">
             <Link to={"/"} className="">
               Homepage
             </Link>
             <span className="text-xs mx-1 sm:mx-1.5">/</span>
-            <span className="underline">Shopping Cart</span>
+            <span className="underline">Order Cart</span>
           </div>
         </div>
 
@@ -122,26 +122,8 @@ const CartPage = () => {
           <div className="flex-1">
             <div className="sticky top-28">
               <h3 className="text-lg font-semibold">Order Summary</h3>
-              <div className="mt-7 text-sm text-slate-500 dark:text-slate-400 divide-y divide-slate-200/70 dark:divide-slate-700/80">
-                <div className="flex justify-between pb-4">
-                  <span>Subtotal</span>
-                  <span className="font-semibold text-slate-900 dark:text-slate-200">
-                    ₺{total.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between py-4">
-                  <span>Shipping estimate</span>
-                  <span className="font-semibold text-slate-900 dark:text-slate-200">
-                    ₺0.00
-                  </span>
-                </div>
-                <div className="flex justify-between py-4">
-                  <span>Tax estimate</span>
-                  <span className="font-semibold text-slate-900 dark:text-slate-200">
-                    ₺0.00
-                  </span>
-                </div>
-                <div className="flex justify-between font-semibold text-slate-900 dark:text-slate-200 text-base pt-4">
+              <div className="mt-7 text-base text-slate-900 dark:text-slate-200 font-semibold">
+                <div className="flex justify-between pb-4 border-b border-slate-200 dark:border-slate-700">
                   <span>Order total</span>
                   <span>₺{total.toFixed(2)}</span>
                 </div>

@@ -123,7 +123,7 @@ export default function CartDropdown() {
               <div className="overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5 dark:ring-white/10">
                 <div className="relative bg-white dark:bg-neutral-800">
                   <div className="max-h-[60vh] p-5 overflow-y-auto hiddenScrollbar">
-                    <h3 className="text-xl font-semibold">Shopping cart</h3>
+                    <h3 className="text-xl font-semibold">Order cart</h3>
                     <div className="divide-y divide-slate-100 dark:divide-slate-700">
                       {items.length === 0 ? (
                         <div className="py-4 text-center text-gray-500">
