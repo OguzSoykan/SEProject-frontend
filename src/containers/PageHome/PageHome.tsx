@@ -184,7 +184,7 @@ function PageHome() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
               {restaurants.map((restaurant) => (
                 <RestaurantCard
-                  key={restaurant.ID}
+                  key={restaurant.id}
                   restaurant={restaurant}
                   className="bg-white dark:bg-neutral-900"
                 />
@@ -214,7 +214,7 @@ function PageHome() {
                 >
                   <h3 className="text-lg font-semibold">{location}</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">
-                    {Array.isArray(restaurants) ? restaurants.filter(r => r.Location === location).length : 0} restaurants
+                    {Array.isArray(restaurants) ? restaurants.filter(r => r.location === location).length : 0} restaurants
                   </p>
                 </div>
               ))}

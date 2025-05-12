@@ -8,8 +8,8 @@ interface UserData {
   uid: number;
   uname: string;
   role: string;
-  fname: string;
-  lname: string;
+  firstName: string;
+  lastName: string;
   exp: number;
   iat: number;
 }
@@ -85,7 +85,7 @@ export default function AvatarDropdown() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-base font-semibold">
-                          {userData ? `${userData.fname} ${userData.lname}` : 'Loading...'}
+                          {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'}
                         </h4>
                         <p className="text-sm text-gray-500 truncate">
                           {userData ? userData.uname : ''}

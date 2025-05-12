@@ -3,11 +3,11 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080';
 
 export interface Restaurant {
-  ID: number;
-  Name: string;
-  Description: string;
-  Location: string;
-  Cuisine: string;
+  id: number;
+  name: string;
+  description: string;
+  location: string;
+  cuisine: string;
   avg_price: number;
   rating: number;
 }
@@ -15,11 +15,8 @@ export interface Restaurant {
 export const restaurantService = {
   getAllRestaurants: async (): Promise<Restaurant[]> => {
     try {
-      const response = await fetch('http://localhost:8080/restaurants');
-      if (!response.ok) {
-        throw new Error('Failed to fetch restaurants');
-      }
-      return response.json();
+      const response = await axios.get(`${API_URL}/restaurants`);
+      return response.data;
     } catch (error) {
       console.error('Error fetching restaurants:', error);
       throw error;

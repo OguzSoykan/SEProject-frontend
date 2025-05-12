@@ -45,7 +45,7 @@ const PageHome: FC = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 mt-8 lg:mt-10">
             {restaurants.map((restaurant) => (
               <RestaurantCard
-                key={restaurant.ID}
+                key={restaurant.id}
                 restaurant={restaurant}
                 className="bg-white dark:bg-neutral-900"
               />

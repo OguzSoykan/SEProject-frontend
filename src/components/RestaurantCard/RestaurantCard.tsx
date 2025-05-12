@@ -15,7 +15,7 @@ const RestaurantCard: FC<RestaurantCardProps> = ({
   className = "",
   restaurant,
 }) => {
-  const { ID, Name, Description, Location, rating, Cuisine, avg_price } = restaurant;
+  const { id, name, description, location, rating, cuisine, avg_price } = restaurant;
   const [isMenuModalOpen, setIsMenuModalOpen] = useState<boolean>(false);
 
   return (
@@ -29,15 +29,15 @@ const RestaurantCard: FC<RestaurantCardProps> = ({
             <NcImage
               containerClassName="w-full h-full"
               className="object-cover w-full h-full rounded-t-2xl"
-              src={`https://source.unsplash.com/random/800x600/?restaurant,${Cuisine}`}
-              alt={Name}
+              src={`https://source.unsplash.com/random/800x600/?restaurant,${cuisine}`}
+              alt={name}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           </div>
           <div className="absolute top-3 right-3">
             <Badge
               className="relative inline-block px-2.5 py-1 text-xs font-medium text-white bg-primary-500"
-              name={Location}
+              name={location}
             />
           </div>
         </div>
@@ -46,7 +46,7 @@ const RestaurantCard: FC<RestaurantCardProps> = ({
           <div className="flex items-center justify-between mb-3">
             <h2 className={`nc-CardTitle text-lg font-semibold`}>
               <span className="line-clamp-1 hover:text-primary-500 transition-colors">
-                {Name}
+                {name}
               </span>
             </h2>
             <div className="flex items-center">
@@ -58,7 +58,7 @@ const RestaurantCard: FC<RestaurantCardProps> = ({
           <div className="flex items-center text-sm text-neutral-500 dark:text-neutral-400 space-x-4">
             <div className="flex items-center">
               <MapPinIcon className="w-4 h-4 mr-1" />
-              <span>{Location}</span>
+              <span>{location}</span>
             </div>
             <div className="flex items-center">
               <ClockIcon className="w-4 h-4 mr-1" />
@@ -66,9 +66,9 @@ const RestaurantCard: FC<RestaurantCardProps> = ({
             </div>
           </div>
 
-          {Description && (
+          {description && (
             <p className="mt-3 text-sm text-neutral-500 dark:text-neutral-400 line-clamp-2">
-              {Description}
+              {description}
             </p>
           )}
 
@@ -88,8 +88,8 @@ const RestaurantCard: FC<RestaurantCardProps> = ({
       <RestaurantMenuModal
         isOpen={isMenuModalOpen}
         onClose={() => setIsMenuModalOpen(false)}
-        restaurantId={ID}
-        restaurantName={Name}
+        restaurantId={id}
+        restaurantName={name}
       />
     </>
   );
