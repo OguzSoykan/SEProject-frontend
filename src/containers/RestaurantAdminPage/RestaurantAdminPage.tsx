@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import axios from "axios";
 import { authService } from "utils/authService";
 import { useNavigate } from "react-router-dom";
+import AdminCard from "components/AdminCard/AdminCard";
 
 interface Restaurant {
   id: number;
@@ -109,43 +110,58 @@ export default function RestaurantAdminPage() {
     }
   };
 
+  const renderRestaurantCard = (restaurant: Restaurant) => {
+    return (
+      <AdminCard
+        key={restaurant.id}
+        title={restaurant.name}
+        subtitle={restaurant.cuisine}
+        description={restaurant.description}
+        metadata={[
+          { label: 'Location', value: restaurant.location },
+          { label: 'Average Price', value: `₺${restaurant.avg_price}` },
+          { label: 'Rating', value: restaurant.rating.toFixed(1) },
+        ]}
+        actions={[
+          {
+            label: 'Edit',
+            onClick: () => openModal(restaurant),
+            variant: 'primary'
+          },
+          {
+            label: 'Delete',
+            onClick: () => handleDelete(restaurant.id),
+            variant: 'danger'
+          },
+          {
+            label: 'Menu Edit',
+            onClick: () => openModal(),
+            variant: 'primary'
+          }
+        ]}
+        className="h-full"
+      />
+    );
+  };
+
   if (isLoading) {
     return <div className="text-center py-10">Loading...</div>;
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Restaurant Management</h1>
-      <button
-        className="mb-4 bg-green-600 text-white px-4 py-2 rounded"
-        onClick={() => openModal()}
-      >
-        Add New Restaurant
-      </button>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Restaurant Management</h1>
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors duration-200"
+          onClick={() => openModal()}
+        >
+          Add New Restaurant
+        </button>
+      </div>
 
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {restaurants.map((res) => (
-          <div key={res.id} className="border p-4 rounded shadow bg-white">
-            <h2 className="text-xl font-semibold">{res.name}</h2>
-            <p>{res.description}</p>
-            <p className="text-sm text-gray-500">{res.location} | {res.cuisine}</p>
-            <p className="text-sm">Average Price: {res.avg_price} ₺ | Rating: {res.rating.toFixed(1)}</p>
-            <div className="mt-2 flex gap-2">
-              <button
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-                onClick={() => openModal(res)}
-              >
-                Edit
-              </button>
-              <button
-                className="bg-red-600 text-white px-3 py-1 rounded"
-                onClick={() => handleDelete(res.id)}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {restaurants.map(renderRestaurantCard)}
       </div>
 
       <Transition appear show={isModalOpen} as={Fragment}>

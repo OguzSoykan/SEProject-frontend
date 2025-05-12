@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import axios from "axios";
+import AdminCard from "components/AdminCard/AdminCard";
 
 interface User {
   id: number;
@@ -100,6 +101,28 @@ export default function AdminPage() {
     }
   };
 
+  const renderUserCard = (user: User) => {
+    return (
+      <AdminCard
+        key={user.id}
+        title={`${user.first_name} ${user.last_name}`}
+        subtitle={user.username}
+        metadata={[
+          { label: 'Role', value: user.role_name },
+          { label: 'Created', value: new Date(user.created_at).toLocaleDateString() }
+        ]}
+        actions={[
+          {
+            label: 'Edit User',
+            onClick: () => handleUserClick(user),
+            variant: 'primary'
+          }
+        ]}
+        className="h-full"
+      />
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -120,49 +143,8 @@ export default function AdminPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">User Management</h1>
       
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
-            <thead className="bg-gray-50 dark:bg-neutral-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
-                  Username
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
-                  Created At
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-neutral-800 divide-y divide-gray-200 dark:divide-neutral-700">
-              {users.map((user) => (
-                <tr
-                  key={user.id}
-                  onClick={() => handleUserClick(user)}
-                  className="hover:bg-gray-50 dark:hover:bg-neutral-700 cursor-pointer"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-neutral-200">
-                    {user.username}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-neutral-200">
-                    {`${user.first_name} ${user.last_name}`}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-neutral-200">
-                    {user.role_name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-neutral-200">
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {users.map(renderUserCard)}
       </div>
 
       {/* Edit Modal */}
