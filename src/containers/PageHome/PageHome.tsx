@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import SectionHero from "components/Sections/SectionHero";
 import RestaurantCard from "components/RestaurantCard/RestaurantCard";
@@ -25,19 +25,17 @@ function PageHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
-    q: '',
+    search: '',
     cuisine: '',
     location: '',
-    price: '',
-    rating: ''
+    maxPrice: '',
+    minRating: ''
   });
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         const data = await restaurantService.getAllRestaurants();
-        console.log("GET data ->", data); // 🔍 BURAYI EKLE
-      setRestaurants(data);
         setRestaurants(data);
         setLoading(false);
       } catch (err) {
@@ -49,45 +47,82 @@ function PageHome() {
     fetchRestaurants();
   }, []);
 
-   // 🔎 Filtrele (query parametrelerini backend'e yolla)
-  const handleFilter = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
+  // Türkçe karakterleri normalize et
+  const normalizeText = (text: string): string => {
+    return text
+      .toLowerCase()
+      .replace(/[ğ]/g, 'g')
+      .replace(/[ü]/g, 'u')
+      .replace(/[ş]/g, 's')
+      .replace(/[ı]/g, 'i')
+      .replace(/[ö]/g, 'o')
+      .replace(/[ç]/g, 'c')
+      .replace(/[Ğ]/g, 'G')
+      .replace(/[Ü]/g, 'U')
+      .replace(/[Ş]/g, 'S')
+      .replace(/[İ]/g, 'I')
+      .replace(/[Ö]/g, 'O')
+      .replace(/[Ç]/g, 'C');
+  };
 
-    if (filters.q) params.append("q", filters.q);
-    if (filters.cuisine) params.append("cuisine", filters.cuisine);
-    if (filters.location) params.append("location", filters.location);
-    if (filters.price) params.append("price", filters.price);
-    if (filters.rating) params.append("rating", filters.rating);
+  // Client-side filtreleme
+  const filteredRestaurants = useMemo(() => {
+    const normalizedSearch = normalizeText(filters.search);
+    
+    return restaurants.filter(restaurant => {
+      // Arama filtresi (isim ve açıklamada ara)
+      if (filters.search) {
+        const normalizedName = normalizeText(restaurant.name);
+        const normalizedDesc = normalizeText(restaurant.description);
+        
+        if (!normalizedName.includes(normalizedSearch) && 
+            !normalizedDesc.includes(normalizedSearch)) {
+          return false;
+        }
+      }
 
-    try {
-      const data: any = await restaurantService.getFilteredRestaurants(params.toString());
- // ✅ Gerçek hata değilse: boş liste kontrolü
-  
-  const result = Array.isArray(data) ? data : data.data;
-  setRestaurants(result);
+      // Mutfak filtresi
+      if (filters.cuisine && restaurant.cuisine !== filters.cuisine) {
+        return false;
+      }
 
-  if (result.length === 0) {
-    setError("No restaurants found matching your criteria.");
-  } else {
-    setError(null);
-  }
-} catch (err) {
-  console.error("Filter fetch failed:", err);
-  setError("Failed to fetch filtered restaurants."); // sadece fetch patlarsa
-}
-};
+      // Lokasyon filtresi
+      if (filters.location && restaurant.location !== filters.location) {
+        return false;
+      }
+
+      // Fiyat filtresi
+      if (filters.maxPrice && restaurant.avg_price > parseInt(filters.maxPrice)) {
+        return false;
+      }
+
+      // Rating filtresi
+      if (filters.minRating && restaurant.rating < parseFloat(filters.minRating)) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [restaurants, filters]);
 
   // Popüler lokasyonları hesapla
-  const locationCounts: Record<string, number> = {};
-  restaurants.forEach((r) => {
-    if (r.location) {
-      locationCounts[r.location] = (locationCounts[r.location] || 0) + 1;
-    }
-  });
-  const popularLocations = Object.entries(locationCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4);
+  const popularLocations = useMemo(() => {
+    const locationCounts: Record<string, number> = {};
+    restaurants.forEach((r) => {
+      if (r.location) {
+        locationCounts[r.location] = (locationCounts[r.location] || 0) + 1;
+      }
+    });
+    return Object.entries(locationCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4);
+  }, [restaurants]);
+
+  // Benzersiz mutfak türlerini hesapla
+  const uniqueCuisines = useMemo(() => {
+    const cuisines = new Set(restaurants.map(r => r.cuisine));
+    return Array.from(cuisines).sort();
+  }, [restaurants]);
 
   return (
     <div className="nc-PageHome relative overflow-hidden">
@@ -105,75 +140,66 @@ function PageHome() {
       <div className="container relative space-y-24 my-24 lg:space-y-32 lg:my-32">
        {/* 🔍 SEARCH + FILTER FORM */}
       <div className="container mt-4">
-        <form
-          onSubmit={handleFilter}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <input
             type="text"
             placeholder="Search restaurant..."
             className="p-2 border border-neutral-300 rounded-md"
-            onChange={(e) => setFilters(prev => ({ ...prev, q: e.target.value }))}
+            value={filters.search}
+            onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
           />
+          
           {/* Cuisine dropdown */}
-    <select
-      className="p-2 border border-neutral-300 rounded-md"
-      onChange={(e) => setFilters(prev => ({ ...prev, cuisine: e.target.value }))}
-    >
-      <option value="">All Cuisines</option>
-      <option value="Turkish">Turkish</option>
-      <option value="Japanese">Japanese</option>
-      <option value="Italian">Italian</option>
-      <option value="American">American</option>
-    </select>
+          <select
+            className="p-2 border border-neutral-300 rounded-md"
+            value={filters.cuisine}
+            onChange={(e) => setFilters(prev => ({ ...prev, cuisine: e.target.value }))}
+          >
+            <option value="">All Cuisines</option>
+            {uniqueCuisines.map(cuisine => (
+              <option key={cuisine} value={cuisine}>{cuisine}</option>
+            ))}
+          </select>
 
-    {/* Location dropdown */}
-    <select
-      className="p-2 border border-neutral-300 rounded-md"
-      onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
-    >
-      <option value="">All Locations</option>
-      <option value="Istanbul">Istanbul</option>
-      <option value="Ankara">Ankara</option>
-      <option value="Izmir">Izmir</option>
-      <option value="Bursa">Bursa</option>
-      <option value="Antalya">Antalya</option>
-    </select>
+          {/* Location dropdown */}
+          <select
+            className="p-2 border border-neutral-300 rounded-md"
+            value={filters.location}
+            onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
+          >
+            <option value="">All Locations</option>
+            {popularLocations.map(([location]) => (
+              <option key={location} value={location}>{location}</option>
+            ))}
+          </select>
 
-    {/* Average Price dropdown */}
-    <select
-      className="p-2 border border-neutral-300 rounded-md"
-      onChange={(e) => setFilters(prev => ({ ...prev, price: e.target.value }))}
-    >
-      <option value="">Any Price</option>
-      <option value="50">Up to ₺50</option>
-      <option value="100">Up to ₺100</option>
-      <option value="150">Up to ₺150</option>
-      <option value="1000">₺150+</option>
-    </select>
+          {/* Average Price dropdown */}
+          <select
+            className="p-2 border border-neutral-300 rounded-md"
+            value={filters.maxPrice}
+            onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
+          >
+            <option value="">Any Price</option>
+            <option value="50">Up to ₺50</option>
+            <option value="100">Up to ₺100</option>
+            <option value="150">Up to ₺150</option>
+            <option value="1000">₺150+</option>
+          </select>
 
-    {/* Rating dropdown */}
-    <select
-      className="p-2 border border-neutral-300 rounded-md"
-      onChange={(e) => setFilters(prev => ({ ...prev, rating: e.target.value }))}
-    >
-      <option value="">Any Rating</option>
-      <option value="1.0">1.0+</option>
-      <option value="2.0">2.0+</option>
-      <option value="3.0">3.0+</option>
-      <option value="4.0">4.0+</option>
-      <option value="4.5">4.5+</option>
-    </select>
-
-          <div className="col-span-full flex justify-center">
-            <button
-              type="submit"
-              className="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-6 rounded-md"
-            >
-              🔍 Apply Filters
-            </button>
-          </div>
-        </form>
+          {/* Rating dropdown */}
+          <select
+            className="p-2 border border-neutral-300 rounded-md"
+            value={filters.minRating}
+            onChange={(e) => setFilters(prev => ({ ...prev, minRating: e.target.value }))}
+          >
+            <option value="">Any Rating</option>
+            <option value="1.0">1.0+</option>
+            <option value="2.0">2.0+</option>
+            <option value="3.0">3.0+</option>
+            <option value="4.0">4.0+</option>
+            <option value="4.5">4.5+</option>
+          </select>
+        </div>
       </div>
     
         {/* RESTAURANT LISTINGS */}
@@ -191,9 +217,11 @@ function PageHome() {
             <div className="text-center py-10">Loading restaurants...</div>
           ) : error ? (
             <div className="text-center py-10 text-red-500">{error}</div>
+          ) : filteredRestaurants.length === 0 ? (
+            <div className="text-center py-10 text-neutral-500">No restaurants found matching your criteria.</div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-              {restaurants.map((restaurant) => (
+              {filteredRestaurants.map((restaurant) => (
                 <RestaurantCard
                   key={restaurant.id}
                   restaurant={restaurant}
@@ -222,6 +250,7 @@ function PageHome() {
                 <div
                   key={location}
                   className="bg-white dark:bg-neutral-900 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => setFilters(prev => ({ ...prev, location }))}
                 >
                   <h3 className="text-lg font-semibold">{location}</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">
