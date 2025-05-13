@@ -135,7 +135,7 @@ const AppContent = () => {
         <Route
           path="/restaurant-admin"
           element={
-            <ProtectedRoute requireDeliveryPerson>
+            <ProtectedRoute requireRestaurantAdmin>
               <RestaurantAdminPage />
             </ProtectedRoute>
           }
@@ -143,7 +143,7 @@ const AppContent = () => {
         <Route
           path="/restaurant-orders"
           element={
-            <ProtectedRoute requireDeliveryPerson>
+            <ProtectedRoute requireRestaurantAdmin>
               <RestaurantOrders />
             </ProtectedRoute>
           }

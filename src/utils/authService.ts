@@ -5,6 +5,27 @@ const API_URL = 'http://localhost:8080';
 // Configure axios defaults
 axios.defaults.withCredentials = true;
 
+// Add request interceptor to add token to all requests
+axios.interceptors.request.use(
+  (config) => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.token) {
+          config.headers.Authorization = `Bearer ${user.token}`;
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export interface RegisterData {
   firstName: string;
   lastName: string;

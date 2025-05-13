@@ -171,22 +171,51 @@ export default function RestaurantAdminPage() {
     e.preventDefault();
     try {
       const fd = new FormData();
-      Object.entries(restaurantForm).forEach(([k, v]) => fd.append(k, v.toString()));
-      if (restaurantImage) fd.append("image", restaurantImage);
+      
+      // Form verilerini FormData'ya ekle
+      fd.append("name", restaurantForm.name);
+      fd.append("description", restaurantForm.description);
+      fd.append("location", restaurantForm.location);
+      fd.append("cuisine", restaurantForm.cuisine);
+      fd.append("avg_price", restaurantForm.avg_price.toString());
+      fd.append("rating", restaurantForm.rating.toString());
+      
+      // Eğer yeni bir resim seçildiyse ekle
+      if (restaurantImage) {
+        fd.append("image", restaurantImage);
+      }
 
       if (editingRestaurant) {
-        await axios.put(`http://localhost:8080/admin/restaurant/${editingRestaurant.id}`, fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        // Restaurant admin için güncelleme endpoint'i
+        const response = await axios.put(
+          `http://localhost:8080/admin/restaurant/${editingRestaurant.id}`, 
+          fd,
+          {
+            headers: { 
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("Update response:", response.data);
       } else {
-        await axios.post("http://localhost:8080/admin/restaurant", fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        // Yeni restoran ekleme endpoint'i
+        const response = await axios.post(
+          "http://localhost:8080/admin/restaurant", 
+          fd,
+          {
+            headers: { 
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("Create response:", response.data);
       }
+
       setIsRestaurantModalOpen(false);
-      fetchRestaurants();
-    } catch (err) {
-      console.error(err);
+      await fetchRestaurants(); // Listeyi yenile
+    } catch (err: any) {
+      console.error("Restaurant update error:", err.response?.data || err);
+      setError(err.response?.data?.message || "Failed to update restaurant. Please try again.");
     }
   };
 
@@ -194,9 +223,10 @@ export default function RestaurantAdminPage() {
     if (!window.confirm("Delete this restaurant?")) return;
     try {
       await axios.delete(`http://localhost:8080/admin/restaurant/${id}`);
-      fetchRestaurants();
-    } catch (err) {
-      console.error(err);
+      await fetchRestaurants(); // Listeyi yenile
+    } catch (err: any) {
+      console.error("Restaurant delete error:", err.response?.data || err);
+      setError(err.response?.data?.message || "Failed to delete restaurant. Please try again.");
     }
   };
 
