@@ -7,11 +7,12 @@ export interface CartItem {
   quantity: number;
   image?: string;
   restaurantId: string;
+  restaurantName: string;
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (item: CartItem) => void;
+  addItem: (item: CartItem) => boolean;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -34,18 +35,27 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
-  const addItem = (newItem: CartItem) => {
+  const addItem = (newItem: CartItem): boolean => {
+    let added = false;
     setItems((currentItems) => {
+      if (currentItems.length > 0 && currentItems[0].restaurantId !== newItem.restaurantId) {
+        window.alert('You can only add items from one restaurant at a time.');
+        added = false;
+        return currentItems;
+      }
       const existingItem = currentItems.find((item) => item.id === newItem.id);
       if (existingItem) {
+        added = true;
         return currentItems.map((item) =>
           item.id === newItem.id
             ? { ...item, quantity: item.quantity + newItem.quantity }
             : item
         );
       }
+      added = true;
       return [...currentItems, newItem];
     });
+    return added;
   };
 
   const removeItem = (id: string) => {

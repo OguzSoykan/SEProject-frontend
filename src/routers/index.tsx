@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Page } from "./types";
 import ScrollToTop from "./ScrollToTop";
-// import Footer from "shared/Footer/Footer";
 import PageHome from "containers/PageHome/PageHome";
 import Page404 from "containers/Page404/Page404";
 import AccountPage from "containers/AccountPage/AccountPage";
@@ -30,8 +29,9 @@ import { authService } from "utils/authService";
 import ProtectedRoute from "components/ProtectedRoute";
 import AdminPage from "containers/AdminPage/AdminPage";
 import UnauthorizedPage from "components/UnauthorizedPage";
+import DeliveryPage from "containers/DeliveryPage/DeliveryPage";
 import RestaurantAdminPage from "containers/RestaurantAdminPage/RestaurantAdminPage";
-
+import RestaurantOrders from "containers/RestaurantAdminPage/RestaurantOrders";
 
 export const pages: Page[] = [
   { path: "/", component: PageHome },
@@ -64,6 +64,7 @@ const AppContent = () => {
   const location = useLocation();
   const isAuthenticated = authService.isAuthenticated();
   const isAdmin = authService.isAdmin();
+  const isDeliveryPerson = authService.isDeliveryPerson();
   const hideHeaderPaths = ["/login", "/signup"];
   const shouldShowHeader = !hideHeaderPaths.includes(location.pathname);
 
@@ -79,6 +80,11 @@ const AppContent = () => {
 
   // If user tries to access admin page without admin role, show unauthorized page
   if (location.pathname === "/admin" && !isAdmin) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  // If user tries to access delivery page without delivery person or admin role, show unauthorized page
+  if (location.pathname === "/delivery" && !isDeliveryPerson && !isAdmin) {
     return <Navigate to="/unauthorized" replace />;
   }
 
@@ -126,22 +132,34 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
-          {/* Restaurant Admin Panel - Admin and Restaurant Admin both allowed */}
         <Route
-         path="/restaurant-admin"
+          path="/restaurant-admin"
           element={
-            authService.isAdmin() || authService.isRestaurantAdmin()
-        ? <RestaurantAdminPage />
-        : <Navigate to="/unauthorized" replace />
-    }
-  />
+            <ProtectedRoute requireDeliveryPerson>
+              <RestaurantAdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/restaurant-orders"
+          element={
+            <ProtectedRoute requireDeliveryPerson>
+              <RestaurantOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/delivery"
+          element={
+            <ProtectedRoute requireDeliveryPerson>
+              <DeliveryPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route element={<Page404 />} />
       </Routes>
-      {/* {shouldShowHeader && <Footer />} */}
     </>
-    
-
   );
 };
 
@@ -182,5 +200,5 @@ export type LocationStates = {
   "/admin"?: {};
   "/unauthorized"?: {};
   "/restaurant-admin"?: {};
-
+  "/delivery"?: {};
 };

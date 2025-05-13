@@ -71,15 +71,26 @@ export const authService = {
       return false;
     }
   },
- isRestaurantAdmin() {
-  const userData = localStorage.getItem("user");
-  if (!userData) return false;
-  try {
-    const user = JSON.parse(userData);
-    return user.role?.toLowerCase() === "restaurant_admin";
-  } catch {
-    return false;
-  }
-}
 
+  isRestaurantAdmin(): boolean {
+    const userData = localStorage.getItem("user");
+    if (!userData) return false;
+    try {
+      const user = JSON.parse(userData);
+      return user.role?.toLowerCase() === "restaurant_admin";
+    } catch {
+      return false;
+    }
+  },
+
+  isDeliveryPerson(): boolean {
+    const userData = localStorage.getItem("user");
+    if (!userData) return false;
+    try {
+      const user = JSON.parse(userData);
+      return user.role?.toLowerCase() === "delivery_person";
+    } catch {
+      return false;
+    }
+  }
 }; 

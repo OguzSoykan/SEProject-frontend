@@ -18,6 +18,7 @@ export default function AvatarDropdown() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isRestaurantAdmin, setIsRestaurantAdmin] = useState(false);
+  const [isDeliveryPerson, setIsDeliveryPerson] = useState(false);
 
   useEffect(() => {
     const storedUserData = localStorage.getItem('user');
@@ -27,6 +28,7 @@ export default function AvatarDropdown() {
         setUserData(parsedData);
         setIsAdmin(authService.isAdmin());
         setIsRestaurantAdmin(authService.isRestaurantAdmin());
+        setIsDeliveryPerson(authService.isDeliveryPerson());
       } catch (error) {
         console.error('Error parsing user data:', error);
       }
@@ -226,7 +228,6 @@ export default function AvatarDropdown() {
                       </Link>
                     )}
 
-                    <div className="w-full border-b border-neutral-200 dark:border-neutral-700" />
                     {/* RestaurantAdmin Panel Link - Only visible to restaurant admin */}
                     {(isRestaurantAdmin || isAdmin) && (
                       <Link
@@ -270,6 +271,52 @@ export default function AvatarDropdown() {
                         </div>
                       </Link>
                     )}
+
+                    {/* Delivery Panel Link - Only visible to delivery person and admin */}
+                    {(isDeliveryPerson || isAdmin) && (
+                      <Link
+                        to={"/delivery"}
+                        className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                        onClick={() => close()}
+                      >
+                        <div className="flex items-center justify-center flex-shrink-0 text-neutral-500 dark:text-neutral-300">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M8 12H16"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <path
+                              d="M12 16V8"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div className="ml-4">
+                          <p className="text-sm font-medium">{"Delivery Panel"}</p>
+                        </div>
+                      </Link>
+                    )}
+
+                    <div className="w-full border-b border-neutral-200 dark:border-neutral-700" />
 
                     {/* ------------------ 2 --------------------- */}
                     <div className="flex items-center justify-between">

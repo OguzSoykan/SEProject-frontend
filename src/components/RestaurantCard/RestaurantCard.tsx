@@ -1,8 +1,8 @@
 import { FC, useState } from "react";
+import { StarIcon, BanknotesIcon } from "@heroicons/react/24/solid";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 import Badge from "shared/Badge/Badge";
 import NcImage from "shared/NcImage/NcImage";
-import { StarIcon } from "@heroicons/react/24/solid";
-import { MapPinIcon, ClockIcon } from "@heroicons/react/24/outline";
 import RestaurantMenuModal from "components/RestaurantMenuModal/RestaurantMenuModal";
 import { Restaurant } from "services/restaurantService";
 
@@ -11,88 +11,104 @@ export interface RestaurantCardProps {
   restaurant: Restaurant;
 }
 
-const RestaurantCard: FC<RestaurantCardProps> = ({
-  className = "",
-  restaurant,
-}) => {
-  const { id, name, description, location, rating, cuisine, avg_price } = restaurant;
+/**
+ * Responsive restaurant preview card. Clicking opens the RestaurantMenuModal.
+ */
+const RestaurantCard: FC<RestaurantCardProps> = ({ className = "", restaurant }) => {
+  const {
+    id,
+    name,
+    description,
+    location,
+    rating,
+    cuisine,
+    avg_price,
+    image_url,
+  } = restaurant;
+
   const [isMenuModalOpen, setIsMenuModalOpen] = useState<boolean>(false);
 
   return (
     <>
-      <div 
-        className={`nc-RestaurantCard group relative bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer ${className}`}
+      <div
+        className={`nc-RestaurantCard group relative rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 hover:shadow-lg transition-shadow cursor-pointer ${className}`}
         onClick={() => setIsMenuModalOpen(true)}
       >
-        <div className="relative flex-shrink-0">
-          <div className="aspect-w-16 aspect-h-9 w-full h-0">
-            <NcImage
-              containerClassName="w-full h-full"
-              className="object-cover w-full h-full rounded-t-2xl"
-              src={`https://source.unsplash.com/random/800x600/?restaurant,${cuisine}`}
-              alt={name}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          </div>
-          <div className="absolute top-3 right-3">
-            <Badge
-              className="relative inline-block px-2.5 py-1 text-xs font-medium text-white bg-primary-500"
-              name={location}
-            />
-          </div>
+        {/* Image */}
+        <div className="relative">
+          <NcImage
+            containerClassName="w-full aspect-[16/9]"
+            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300 rounded-t-2xl"
+            src={image_url}
+            alt={name}
+          />
+          {/* gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          {/* location badge */}
+          {location && (
+            <div className="absolute top-3 right-3">
+              <Badge className="!px-2.5 !py-1 bg-primary-500 text-xs text-white" name={location} />
+            </div>
+          )}
         </div>
 
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className={`nc-CardTitle text-lg font-semibold`}>
-              <span className="line-clamp-1 hover:text-primary-500 transition-colors">
-                {name}
-              </span>
+        {/* Body */}
+        <div className="p-5 space-y-3">
+          {/* title + rating */}
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold line-clamp-1 text-neutral-900 dark:text-neutral-100 group-hover:text-primary-500 transition-colors">
+              {name}
             </h2>
-            <div className="flex items-center">
+            <div className="flex items-center gap-1">
               <StarIcon className="w-5 h-5 text-yellow-400" />
-              <span className="ml-1 text-sm font-medium">{rating.toFixed(1)}</span>
+              <span className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                {rating.toFixed(1)}
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center text-sm text-neutral-500 dark:text-neutral-400 space-x-4">
-            <div className="flex items-center">
-              <MapPinIcon className="w-4 h-4 mr-1" />
-              <span>{location}</span>
-            </div>
-            <div className="flex items-center">
-              <ClockIcon className="w-4 h-4 mr-1" />
-              <span>{avg_price > 0 ? `Ortalama: ₺${avg_price}` : ''}</span>
-            </div>
+          {/* meta info */}
+          <div className="flex items-center gap-4 text-sm text-neutral-500 dark:text-neutral-400">
+            {cuisine && (
+              <span className="capitalize">{cuisine}</span>
+            )}
+            {avg_price > 0 && (
+              <span className="flex items-center gap-1">
+                <BanknotesIcon className="w-4 h-4" />
+                Avg: ₺{avg_price.toFixed(2)}
+              </span>
+            )}
           </div>
 
+          {/* description */}
           {description && (
-            <p className="mt-3 text-sm text-neutral-500 dark:text-neutral-400 line-clamp-2">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2">
               {description}
             </p>
           )}
 
-          <div className="mt-4 flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-primary-500">Free Delivery</span>
-              <span className="text-sm text-neutral-500 dark:text-neutral-400">•</span>
-              <span className="text-sm text-neutral-500 dark:text-neutral-400">Min. ₺50</span>
-            </div>
-            <span className="text-sm font-medium text-primary-500">
-              View Menu →
-            </span>
+          {/* footer */}
+          <div className="flex items-center justify-between pt-3 border-t border-neutral-100 dark:border-neutral-800">
+            <span className="text-sm font-medium text-primary-500">Free delivery</span>
+            <span className="text-sm font-medium text-primary-500 group-hover:underline">View menu →</span>
           </div>
         </div>
       </div>
 
+      {/* Modal */}
       <RestaurantMenuModal
         isOpen={isMenuModalOpen}
         onClose={() => setIsMenuModalOpen(false)}
         restaurantId={id}
         restaurantName={name}
+        restaurantImage={image_url}
+        restaurantLocation={location}
+        restaurantDescription={description}
+        restaurantRating={rating}
+        restaurantAvgPrice={avg_price}
       />
     </>
   );
 };
 
-export default RestaurantCard; 
+export default RestaurantCard;

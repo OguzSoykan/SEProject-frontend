@@ -78,6 +78,17 @@ function PageHome() {
 }
 };
 
+  // Popüler lokasyonları hesapla
+  const locationCounts: Record<string, number> = {};
+  restaurants.forEach((r) => {
+    if (r.location) {
+      locationCounts[r.location] = (locationCounts[r.location] || 0) + 1;
+    }
+  });
+  const popularLocations = Object.entries(locationCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4);
+
   return (
     <div className="nc-PageHome relative overflow-hidden">
       <Helmet>
@@ -207,14 +218,14 @@ function PageHome() {
               Popular Locations
             </Heading>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-              {['Istanbul', 'Ankara', 'Izmir', 'Antalya'].map((location) => (
+              {popularLocations.map(([location, count]) => (
                 <div
                   key={location}
                   className="bg-white dark:bg-neutral-900 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow cursor-pointer"
                 >
                   <h3 className="text-lg font-semibold">{location}</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">
-                    {Array.isArray(restaurants) ? restaurants.filter(r => r.location === location).length : 0} restaurants
+                    {count} restaurants
                   </p>
                 </div>
               ))}

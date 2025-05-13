@@ -6,11 +6,17 @@ import UnauthorizedPage from "./UnauthorizedPage";
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
+  requireDeliveryPerson?: boolean;
 }
 
-export default function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
+export default function ProtectedRoute({
+  children,
+  requireAdmin,
+  requireDeliveryPerson,
+}: ProtectedRouteProps) {
   const isAuthenticated = authService.isAuthenticated();
   const isAdmin = authService.isAdmin();
+  const isDeliveryPerson = authService.isDeliveryPerson();
 
   if (!isAuthenticated) {
     // Redirect to login if not authenticated
@@ -19,7 +25,11 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
 
   if (requireAdmin && !isAdmin) {
     // Show unauthorized page if not admin
-    return <UnauthorizedPage />;
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  if (requireDeliveryPerson && !isDeliveryPerson && !isAdmin) {
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return <>{children}</>;

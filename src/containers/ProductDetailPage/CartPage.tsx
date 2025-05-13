@@ -28,6 +28,7 @@ const CartPage = () => {
             <div className="flex justify-between ">
               <div className="flex-[1.5] ">
                 <h3 className="text-base font-semibold">{item.name}</h3>
+                <div className="text-xs text-gray-400 italic mb-1">{item.restaurantName}</div>
                 <div className="mt-1.5 sm:mt-2.5 flex text-sm text-slate-600 dark:text-slate-300">
                   <div className="flex items-center space-x-1.5">
                     <span>Price: ₺{item.price.toFixed(2)}</span>

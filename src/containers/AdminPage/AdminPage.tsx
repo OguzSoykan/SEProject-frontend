@@ -11,6 +11,8 @@ interface User {
   created_at: string;
   role_id: number;
   role_name: string;
+  email: string;
+  is_active: boolean;
 }
 
 interface EditUserData {
@@ -107,9 +109,10 @@ export default function AdminPage() {
         key={user.id}
         title={`${user.first_name} ${user.last_name}`}
         subtitle={user.username}
+        description={`Email: ${user.email}`}
         metadata={[
           { label: 'Role', value: user.role_name },
-          { label: 'Created', value: new Date(user.created_at).toLocaleDateString() }
+          { label: 'Status', value: user.is_active ? 'Active' : 'Inactive' }
         ]}
         actions={[
           {
